@@ -50,9 +50,19 @@ and let the AI follow a predefined workflow.
 
 ## Install
 
-Each skill is a folder containing a `SKILL.md`, following the [Agent Skills](https://agentskills.io) format — usable by any agent that supports it. Point your agent at this repository (or install it as a plugin via the catalog in [`.claude-plugin/`](.claude-plugin/)) and invoke a skill by its command.
+Add the whole collection:
 
-The plans and investigations skills produce are plain markdown, so any agent — or any human — can pick them up.
+```bash
+npx skills add NotHarshhaa/devops-skills
+```
+
+Or add a single skill:
+
+```bash
+npx skills add NotHarshhaa/devops-skills/k8s-review
+```
+
+Works in any agent that supports the [Agent Skills](https://agentskills.io) format. Each skill is a folder containing a `SKILL.md`; you can also install the collection as a plugin via the catalog in [`.claude-plugin/`](.claude-plugin/). The plans and investigations these skills write are plain markdown, so any agent (or human) can pick them up.
 
 ---
 

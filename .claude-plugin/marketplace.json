@@ -1,0 +1,15 @@
+{
+  "name": "devops-skills",
+  "owner": {
+    "name": "devops-skills contributors"
+  },
+  "metadata": {
+    "description": "Marketplace catalog for the devops-skills plugin — a suite of read-only DevOps advisor skills."
+  },
+  "plugins": [
+    {
+      "name": "devops-skills",
+      "source": "./"
+    }
+  ]
+}

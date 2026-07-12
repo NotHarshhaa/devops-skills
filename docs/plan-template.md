@@ -1,0 +1,165 @@
+# Remediation Plan Template
+
+DevOps skills produce **plans, not changes**. Each selected finding becomes one
+self-contained plan file that a *different, less capable agent (or a human on
+call) with zero context from this session* can execute, validate, and roll back.
+
+Three properties make a plan executable by a weaker executor:
+
+1. **Self-contained context** — everything needed is in the file: paths,
+   config excerpts, the exact commands to run, the environment it targets.
+2. **Verification gates** — every step ends with a command and its expected
+   result. The executor never has to *judge* whether it succeeded.
+3. **Hard boundaries, rollback, and escape hatches** — explicit out-of-scope
+   list, a rollback procedure, and "STOP and report" conditions instead of
+   letting the executor improvise when reality doesn't match the plan.
+
+File naming: `plans/NNN-short-slug.md`, numbered in recommended execution order.
+
+---
+
+## Template
+
+```markdown
+# Plan NNN: <Imperative title — what will be true after this plan>
+
+> **Executor instructions**: Follow this plan step by step. Run every
+> verification command and confirm the expected result before moving to the
+> next step. If anything in the "STOP conditions" section occurs, stop and
+> report — do not improvise. When done, update the status row for this plan
+> in `plans/README.md`.
+
+## Status
+
+- **Priority**: P1 | P2 | P3
+- **Effort**: S | M | L
+- **Risk**: LOW | MED | HIGH
+- **Blast radius**: which environments/services this touches
+- **Depends on**: plans/NNN-*.md (or "none")
+- **Category**: correctness | security | reliability | performance | cost | observability | operability | docs
+- **Change window**: any (safe anytime) | maintenance window only | requires approval
+
+## Why this matters
+
+2–5 sentences. The problem, its concrete cost or risk, and what improves when
+this lands. Intent is what lets an executor make a correct judgment call when a
+detail is slightly off.
+
+## Current state
+
+The facts the executor needs, inlined — never "as discussed":
+
+- The relevant files or resources, each with one line on its role and the
+  excerpt of the config/state as it exists today (short, with `file:line` or a
+  `kubectl/terraform/aws` command + its output).
+- The conventions and constraints that apply (naming, module structure, the
+  environment's guardrails), with a pointer to one exemplar to match.
+
+## Preconditions
+
+- Access/permissions required (which role, which cluster/account/project).
+- Backups or snapshots to confirm exist before starting.
+- Traffic/state assumptions (e.g. "run during low traffic; this restarts pods").
+
+## Commands you will need
+
+| Purpose      | Command                              | Expected on success |
+|--------------|--------------------------------------|---------------------|
+| Validate     | `terraform validate` / `kubeval ...` | exit 0, no errors   |
+| Dry-run/plan | `terraform plan` / `kubectl diff`    | shows only intended |
+| Apply        | `<apply command>`                    | exit 0              |
+| Verify       | `<check command>`                    | <expected output>   |
+
+(Exact commands for this repo/environment — verified during recon, not guessed.)
+
+## Scope
+
+**In scope** (the only files/resources you should modify):
+- `path/to/file` — what changes
+
+**Out of scope** (do NOT touch, even though they look related):
+- `path/to/other` — why it must stay untouched
+
+## Steps
+
+### Step 1: <imperative title>
+
+What to do, precisely. Reference exact files/symbols/resources. Show the target
+config shape when it is load-bearing.
+
+**Verify**: `<command>` → <expected output>
+
+### Step 2: ...
+
+(Each step small enough to verify independently. Order steps so the system is
+never left in a broken state between steps.)
+
+## Validation
+
+- The end-to-end check that proves the change worked (a request that now
+  succeeds, a metric that moved, an alert that cleared).
+- Command(s) and expected results.
+
+## Rollback
+
+Exact steps to revert to the prior state, and how to confirm the revert worked.
+If a change is not cleanly reversible (data migration, deletion), say so
+explicitly and describe the safest recovery path.
+
+## Done criteria
+
+Machine-checkable. ALL must hold:
+
+- [ ] `<command>` exits 0 / shows <expected>
+- [ ] No resources outside the in-scope list changed
+- [ ] `plans/README.md` status row updated
+
+## STOP conditions
+
+Stop and report back (do not improvise) if:
+
+- The live state doesn't match the "Current state" excerpts (drift).
+- A step's verification fails twice after a reasonable fix attempt.
+- The change appears to require touching an out-of-scope resource.
+- Applying the change would affect production outside the stated change window.
+
+## Maintenance notes
+
+- What future changes will interact with this.
+- What a reviewer should scrutinize before approving.
+- Any follow-up explicitly deferred out of this plan (and why).
+```
+
+---
+
+## Index file: `plans/README.md`
+
+```markdown
+# Remediation Plans
+
+Generated by <skill> on <date> against <environment/commit>. Execute in the
+order below unless dependencies say otherwise. Each executor: read the plan
+fully before starting, honor its STOP conditions, and update your row when done.
+
+## Execution order & status
+
+| Plan | Title | Priority | Effort | Blast radius | Depends on | Status |
+|------|-------|----------|--------|--------------|------------|--------|
+| 001  | ...   | P1       | S      | staging      | —          | TODO   |
+
+Status values: TODO | IN PROGRESS | DONE | BLOCKED (reason) | REJECTED (rationale)
+
+## Findings considered and rejected
+
+- <finding>: not worth doing because <one line>. (So nobody re-audits it.)
+```
+
+## Quality bar — check before finishing each plan
+
+- Could an agent that has never seen this environment execute it with only the
+  plan file and access? If a step needs knowledge from this session, inline it.
+- Is every verification a command with an expected result, not "make sure it
+  works"?
+- Is there a real rollback, and is any irreversible step called out?
+- Are the STOP conditions specific to this plan's actual risks, not boilerplate?
+- No secret values anywhere — locations and credential types only.

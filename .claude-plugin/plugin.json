@@ -1,0 +1,25 @@
+{
+  "name": "devops-skills",
+  "description": "A collection of read-only DevOps advisor skills. Point them at infrastructure, clusters, pipelines, or an incident and they investigate, base findings on evidence, and write structured remediation or investigation plans any agent can execute. They never apply changes themselves.",
+  "version": "1.0.0",
+  "author": {
+    "name": "devops-skills contributors"
+  },
+  "homepage": "https://github.com/your-org/devops-skills",
+  "repository": "https://github.com/your-org/devops-skills",
+  "license": "MIT",
+  "keywords": [
+    "devops",
+    "sre",
+    "platform-engineering",
+    "incident-response",
+    "kubernetes",
+    "terraform",
+    "ci-cd",
+    "docker",
+    "observability",
+    "security",
+    "cost-optimization",
+    "release-readiness"
+  ]
+}

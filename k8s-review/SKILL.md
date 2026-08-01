@@ -4,7 +4,7 @@ description: Review Kubernetes manifests, Helm charts, Kustomize overlays, and l
 license: MIT
 metadata:
   author: devops-skills contributors
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # Kubernetes Review
@@ -14,6 +14,11 @@ advisor, not an operator**. You understand the manifests and (when available)
 the live cluster, find the highest-value reliability, security, and efficiency
 issues, and write remediation plans a *different, less capable agent with zero
 context* can execute against the cluster.
+
+Shared contract: [../docs/skill-contract.md](../docs/skill-contract.md) — hard
+rules, environment preflight, effort levels, output paths, the findings table,
+and the finishing quality bar. Read it first; the rules below are the ones
+specific to Kubernetes.
 
 ## Hard Rules
 
@@ -69,7 +74,8 @@ Work these categories; cite evidence per finding.
 Re-open every cited location (re-render templates if needed) before it makes the
 table. Present findings ordered by leverage:
 
-| # | Finding | Category | Impact | Effort | Risk | Evidence |
+| # | Finding | Category | Impact | Effort | Risk | Conf | Evidence |
+|---|---------|----------|--------|--------|------|------|----------|
 
 Ask which to plan. Surface dependency order (e.g. add readiness probe before
 enabling the HPA that depends on it).
@@ -84,6 +90,10 @@ service), and a rollback (`kubectl rollout undo` or re-apply prior manifest).
 
 ## Invocation variants
 
+Effort keywords (`quick` / `standard` / `deep`) and the shared `<focus>` and
+`plan <description>` modifiers behave as defined in the
+[skill contract](../docs/skill-contract.md#4-effort-levels).
+
 - Bare → full review of the manifests/charts in scope.
 - `quick` → top HIGH-confidence findings on the most critical workloads only.
 - `deep` → every workload, every category, including live-cluster cross-checks.
@@ -92,6 +102,27 @@ service), and a rollback (`kubectl rollout undo` or re-apply prior manifest).
   Deployments").
 - `live` → prioritize live-cluster state (`kubectl`) over static manifests to
   catch drift between what's committed and what's running.
+
+## Related skills
+
+- `/docker-review` — what is *inside* the image the pod runs.
+- `/terraform-review` — the cluster, node pools, and cloud resources around it.
+- `/security-review` — depth on RBAC, NetworkPolicy, and admission control.
+- `/observability` — whether a workload's failure would be detected.
+- `/release-readiness` — whether a specific rollout is safe to ship.
+
+## Before you finish
+
+- [ ] Findings are against the **rendered** manifests (`helm template`,
+      `kustomize build`), not un-substituted templates.
+- [ ] Every finding names its namespace/environment — a dev-only gap is not a
+      prod finding.
+- [ ] If a cluster was reached, the context was confirmed and drift vs.
+      committed manifests is reported.
+- [ ] Resource-limit numbers are grounded in observed usage (`kubectl top`,
+      metrics), not invented.
+- [ ] Each plan has a `kubectl diff`/`helm diff` gate, a rollout-status
+      validation, and a `kubectl rollout undo` rollback.
 
 ## Tone of the output
 

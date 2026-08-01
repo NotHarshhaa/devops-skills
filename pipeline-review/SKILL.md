@@ -4,7 +4,7 @@ description: Review CI/CD pipelines (GitHub Actions, GitLab CI, Jenkins, CircleC
 license: MIT
 metadata:
   author: devops-skills contributors
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # Pipeline Review
@@ -14,6 +14,11 @@ operator**. You understand the pipeline definitions and their intent, find the
 highest-value reliability, speed, security, and correctness issues, and write
 remediation plans a *different, less capable agent with zero context* can
 execute.
+
+Shared contract: [../docs/skill-contract.md](../docs/skill-contract.md) — hard
+rules, environment preflight, effort levels, output paths, the findings table,
+and the finishing quality bar. Read it first; the rules below are the ones
+specific to CI/CD.
 
 ## Hard Rules
 
@@ -68,7 +73,8 @@ Re-open every cited workflow/step. For flakiness or speed claims, cite run
 history where available (failure rate, job duration). Present ordered by
 leverage:
 
-| # | Finding | Category | Impact | Effort | Risk | Evidence |
+| # | Finding | Category | Impact | Effort | Risk | Conf | Evidence |
+|---|---------|----------|--------|--------|------|------|----------|
 
 Ask which to plan; surface ordering (e.g. pin actions before widening
 permissions review).
@@ -83,11 +89,33 @@ current YAML excerpt and target shape.
 
 ## Invocation variants
 
+Effort keywords (`quick` / `standard` / `deep`) and the shared `<focus>` and
+`plan <description>` modifiers behave as defined in the
+[skill contract](../docs/skill-contract.md#4-effort-levels).
+
 - Bare → full review of the pipelines in scope.
 - `quick` → top HIGH-confidence findings, security and broken gates first.
 - `deep` → every workflow, including run-history analysis.
 - Focus (`security`, `speed`, `reliability`) → that lens only.
 - `plan <description>` → spec one known change.
+
+## Related skills
+
+- `/docker-review` — the image build the pipeline invokes.
+- `/security-review` — depth on supply chain, OIDC, and secret scoping.
+- `/release-readiness` — whether the flow actually gates production.
+- `/observability` — deploy annotations and post-deploy verification signals.
+
+## Before you finish
+
+- [ ] Flakiness and speed claims cite run-history numbers (failure rate, p50/p95
+      duration), not impressions.
+- [ ] Each finding records the workflow's **trigger** — `pull_request_target` or
+      a self-hosted runner changes severity substantially.
+- [ ] Action/step pinning was checked at the cited line (tag vs. SHA).
+- [ ] The path to production is described end to end, including who can approve
+      and what happens on failure.
+- [ ] Each plan validates by running CI on a branch/PR and rolls back by revert.
 
 ## Tone of the output
 

@@ -4,7 +4,7 @@ description: Review monitoring, metrics, logging, tracing, dashboards, and alert
 license: MIT
 metadata:
   author: devops-skills contributors
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # Observability Review
@@ -16,6 +16,11 @@ plans a *different, less capable agent with zero context* can execute.
 
 The guiding question: **if this system broke right now, would we know — and
 would the signal point to the cause?**
+
+Shared contract: [../docs/skill-contract.md](../docs/skill-contract.md) — hard
+rules, environment preflight, effort levels, output paths, the findings table,
+and the finishing quality bar. Read it first; the rules below are the ones
+specific to observability tooling.
 
 ## Hard Rules
 
@@ -69,7 +74,8 @@ query the metric and show it doesn't exist, or show an alert's firing history to
 prove noise). Present ordered by leverage — detection gaps on critical paths and
 noise that erodes trust in paging float to the top:
 
-| # | Finding | Category | Impact | Effort | Risk | Evidence |
+| # | Finding | Category | Impact | Effort | Risk | Conf | Evidence |
+|---|---------|----------|--------|--------|------|------|----------|
 
 Ask which to plan.
 
@@ -84,6 +90,10 @@ a runbook link.
 
 ## Invocation variants
 
+Effort keywords (`quick` / `standard` / `deep`) and the shared `<focus>` and
+`plan <description>` modifiers behave as defined in the
+[skill contract](../docs/skill-contract.md#4-effort-levels).
+
 - Bare → full observability review across the pillars.
 - `quick` → the "would we detect the top failure modes?" gap analysis only.
 - `deep` → every service, dashboard, and alert rule.
@@ -91,6 +101,25 @@ a runbook link.
 - `noise` → focus purely on reducing alert fatigue (rank by firing volume vs.
   actioned rate).
 - `plan <description>` → spec one known change.
+
+## Related skills
+
+- `/incident` — real incidents are the best evidence of a detection gap.
+- `/runbook` — every page needs a runbook; alerts without one are a `DOC` finding.
+- `/k8s-review`, `/db-review` — instrumentation gaps at the workload/data layer.
+- `/release-readiness` — whether *this* release would be caught going wrong.
+- `/cost` — log retention and metric cardinality are also spend decisions.
+
+## Before you finish
+
+- [ ] Each gap is tied to a named failure mode of a named critical journey —
+      "would we detect X?" is answered concretely, not in the abstract.
+- [ ] Noise claims cite firing volume and actioned rate, not opinion.
+- [ ] Every proposed alert specifies symptom-based condition, threshold
+      rationale, severity, routing, and a runbook link.
+- [ ] Cardinality and retention cost of new signals is considered.
+- [ ] Existing coverage is credited — nothing is recommended that already exists
+      under a different name.
 
 ## Tone of the output
 

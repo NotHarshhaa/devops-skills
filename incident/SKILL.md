@@ -4,7 +4,7 @@ description: Investigate a production incident as a senior SRE and produce a hyp
 license: MIT
 metadata:
   author: devops-skills contributors
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # Incident
@@ -15,6 +15,11 @@ evidence, form and test hypotheses, identify the safest mitigation, and find
 root cause — then hand the operator clear recommendations and durable follow-up
 plans. You never take the mitigating action yourself; a human is on the keyboard
 for anything that changes the system.
+
+Shared contract: [../docs/skill-contract.md](../docs/skill-contract.md) — hard
+rules, environment preflight, effort levels, output paths, the findings table,
+and the finishing quality bar. Read it first; the rules below are the ones
+specific to live incident work.
 
 ## Hard Rules
 
@@ -93,6 +98,10 @@ deploy path → `/pipeline-review`.
 
 ## Invocation variants
 
+Effort keywords (`quick` / `standard` / `deep`) and the shared `<focus>` and
+`plan <description>` modifiers behave as defined in the
+[skill contract](../docs/skill-contract.md#4-effort-levels).
+
 - Bare invocation → full live investigation, starting at Phase 1.
 - `postmortem` (or `retro`) → the incident is over; produce a blameless
   post-incident review from the evidence: timeline, contributing factors, root
@@ -106,7 +115,31 @@ deploy path → `/pipeline-review`.
 
 Symptoms and follow-up findings use the shared format in
 [../docs/finding-format.md](../docs/finding-format.md). Follow-up findings
-typically fall under `REL`, `OBS`, or `SEC`.
+typically fall under `REL`, `OBS`, or `SEC`, and are summarized with the
+canonical columns before they are routed:
+
+| # | Follow-up | Category | Impact | Effort | Risk | Conf | Route to |
+|---|-----------|----------|--------|--------|------|------|----------|
+
+## Related skills
+
+- `/observability` — a late or missing alert found here becomes a detection plan there.
+- `/k8s-review`, `/terraform-review`, `/db-review` — durable fixes for the failure mode.
+- `/dr-review` — if the incident exposed a broken backup, restore, or failover path.
+- `/runbook` — if no runbook existed for this failure mode, writing one is a follow-up.
+
+## Before you finish
+
+- [ ] The timeline is timestamped with a timezone, append-only, and every entry
+      cites its source.
+- [ ] "What changed" was actually checked — deploys, flags, infra applies,
+      cert/secret rotation, provider status — not assumed.
+- [ ] Every live hypothesis has a cheap read-only probe; ruled-out ones record why.
+- [ ] The recommended mitigation states expected effect, how to confirm it
+      helped, and rollback — and that the operator executes it, not you.
+- [ ] Trigger and root cause are distinguished; unknowns are listed as unknowns.
+- [ ] Follow-ups are routed to a skill and specific enough to become plans —
+      never "improve monitoring".
 
 ## Tone of the output
 

@@ -4,7 +4,7 @@ description: Review Dockerfiles, container images, and Compose files as a senior
 license: MIT
 metadata:
   author: devops-skills contributors
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # Docker Review
@@ -14,6 +14,11 @@ advisor, not an operator**. You understand the Dockerfiles and their intent,
 find the highest-value size, speed, security, and correctness issues, and write
 remediation plans a *different, less capable agent with zero context* can
 execute.
+
+Shared contract: [../docs/skill-contract.md](../docs/skill-contract.md) — hard
+rules, environment preflight, effort levels, output paths, the findings table,
+and the finishing quality bar. Read it first; the rules below are the ones
+specific to container builds.
 
 ## Hard Rules
 
@@ -68,7 +73,8 @@ Re-open every cited line and confirm scan hits are reachable (a CVE in an unused
 build-stage package matters less than one in the runtime image). Present ordered
 by leverage:
 
-| # | Finding | Category | Impact | Effort | Risk | Evidence |
+| # | Finding | Category | Impact | Effort | Risk | Conf | Evidence |
+|---|---------|----------|--------|--------|------|------|----------|
 
 Ask which to plan.
 
@@ -83,11 +89,33 @@ permissions) as a STOP-and-verify point.
 
 ## Invocation variants
 
+Effort keywords (`quick` / `standard` / `deep`) and the shared `<focus>` and
+`plan <description>` modifiers behave as defined in the
+[skill contract](../docs/skill-contract.md#4-effort-levels).
+
 - Bare → full review of the Dockerfiles/Compose in scope.
 - `quick` → top HIGH-confidence findings, security and size first.
 - `deep` → every image and stage, including full CVE scan triage.
 - Focus (`security`, `size`, `speed`) → that lens only.
 - `plan <description>` → spec one known change.
+
+## Related skills
+
+- `/k8s-review` — how the image is run (securityContext, probes, resources).
+- `/pipeline-review` — how and where the image is built, signed, and promoted.
+- `/security-review` — depth on CVE triage and supply-chain provenance.
+
+## Before you finish
+
+- [ ] Scan findings triaged by **reachability** — runtime-stage vulnerabilities
+      rank above build-stage ones; unreachable CVEs are dropped or marked LOW.
+- [ ] Size and cache claims are quantified (`docker history`/`dive` layer sizes,
+      before → after estimate), not asserted.
+- [ ] Secrets found in layers or history are flagged with **rotation** — a layer
+      is permanent.
+- [ ] Base-image swaps were checked for libc, package, and platform
+      compatibility (`--platform`, glibc vs. musl).
+- [ ] Non-root recommendations state the file-ownership work they imply.
 
 ## Tone of the output
 

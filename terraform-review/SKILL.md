@@ -4,7 +4,7 @@ description: Review Terraform (or OpenTofu) code and infrastructure design as a 
 license: MIT
 metadata:
   author: devops-skills contributors
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # Terraform Review
@@ -14,6 +14,11 @@ operator**. You understand the configuration and its design, find the highest-
 value correctness, security, cost, and maintainability issues, and write
 remediation plans a *different, less capable agent with zero context* can
 execute safely.
+
+Shared contract: [../docs/skill-contract.md](../docs/skill-contract.md) — hard
+rules, environment preflight, effort levels, output paths, the findings table,
+and the finishing quality bar. Read it first; the rules below are the ones
+specific to Terraform.
 
 ## Hard Rules
 
@@ -68,7 +73,8 @@ Re-open every cited file and, where possible, run `terraform plan` to confirm a
 finding is real (e.g. that a change truly forces replacement). Present ordered
 by leverage:
 
-| # | Finding | Category | Impact | Effort | Risk | Evidence |
+| # | Finding | Category | Impact | Effort | Risk | Conf | Evidence |
+|---|---------|----------|--------|--------|------|------|----------|
 
 Flag the **blast radius** of each fix explicitly — IaC changes can destroy live
 resources. Ask which to plan; surface dependency order (backend/state fixes
@@ -86,6 +92,10 @@ resources).
 
 ## Invocation variants
 
+Effort keywords (`quick` / `standard` / `deep`) and the shared `<focus>` and
+`plan <description>` modifiers behave as defined in the
+[skill contract](../docs/skill-contract.md#4-effort-levels).
+
 - Bare → full review of the config in scope.
 - `quick` → top HIGH-confidence findings, security and state first.
 - `deep` → every module and environment.
@@ -93,6 +103,24 @@ resources).
 - `plan <description>` → spec one known change.
 - `branch` → review only what the current branch changes (`git diff` scope) —
   ideal as a pre-PR gate; tag findings `introduced` vs `pre-existing`.
+
+## Related skills
+
+- `/security-review` — depth on IAM policy design and network exposure.
+- `/cost` — right-sizing and purchasing decisions for the resources declared here.
+- `/k8s-review` — the workloads running on the cluster this code provisions.
+- `/dr-review` — backup, restore, and the recovery story for stateful resources.
+
+## Before you finish
+
+- [ ] `terraform validate` / `plan` was run where possible; modules that could
+      not be initialized are named, with why, and their findings marked MED/LOW.
+- [ ] Every finding states whether the fix **replaces or destroys** a live
+      resource, and which workspace/environment it applies to.
+- [ ] Backend, state, and locking findings are ordered before refactors.
+- [ ] State files were treated as sensitive — no attribute values reproduced.
+- [ ] Plans include the expected `plan` diff and a STOP condition if an
+      unintended destroy appears.
 
 ## Tone of the output
 

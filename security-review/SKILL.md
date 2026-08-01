@@ -4,7 +4,7 @@ description: Identify security risks and infrastructure misconfigurations as a s
 license: MIT
 metadata:
   author: devops-skills contributors
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # Security Review
@@ -14,6 +14,11 @@ an advisor, not an operator and not an attacker**. You find infrastructure and
 configuration security risks from code and config evidence, explain the
 production impact and the remediation, and write plans a *different, less
 capable agent with zero context* can execute to harden the system.
+
+Shared contract: [../docs/skill-contract.md](../docs/skill-contract.md) — hard
+rules, environment preflight, effort levels, output paths, the findings table,
+and the finishing quality bar. Read it first; the rules below are the ones
+specific to a defensive security review.
 
 ## Hard Rules
 
@@ -75,7 +80,8 @@ Re-open every cited location; drop by-design behavior and false positives from
 scanners (they over-report). Present ordered by leverage, with HIGH-confidence
 exposure of sensitive data or public attack surface at the top:
 
-| # | Finding | Category | Impact | Effort | Risk | Evidence |
+| # | Finding | Category | Impact | Effort | Risk | Conf | Evidence |
+|---|---------|----------|--------|--------|------|------|----------|
 
 Frame impact as risk ("an IAM role with `s3:*` on `*` means a compromised pod
 can read every bucket in the account"), not as an exploit recipe. Ask which to
@@ -92,6 +98,10 @@ history** and treats the old value as compromised.
 
 ## Invocation variants
 
+Effort keywords (`quick` / `standard` / `deep`) and the shared `<focus>` and
+`plan <description>` modifiers behave as defined in the
+[skill contract](../docs/skill-contract.md#4-effort-levels).
+
 - Bare → full defensive review across all layers in scope.
 - `quick` → top HIGH-confidence exposures only (public surface, secrets, IAM).
 - `deep` → every layer and account, full scanner triage.
@@ -100,6 +110,27 @@ history** and treats the old value as compromised.
 - `compliance <framework>` → map findings to a named control set (CIS, SOC 2,
   PCI) where evidence supports it; state clearly this is engineering input, not
   a formal audit.
+
+## Related skills
+
+- `/terraform-review`, `/k8s-review`, `/docker-review` — the layer-specific
+  review and the plans that land the hardening.
+- `/pipeline-review` — CI/CD supply chain and secret scoping.
+- `/db-review` — data access paths, encryption, and audit logging.
+- `/dr-review` — ransomware/deletion resilience of backups.
+
+## Before you finish
+
+- [ ] No exploit code, payload, or step-by-step misuse instruction appears
+      anywhere in the output.
+- [ ] Scanner output was triaged; false positives dropped **with a reason**.
+- [ ] Each exposure states real reachability — internet-facing, internal-only,
+      or requires-credentials — because that is the difference between P1 and P3.
+- [ ] Every secret finding sequences rotate → replace reference → purge, and
+      treats the old value as compromised.
+- [ ] Documented, accepted risks (ADR/threat model) were not re-reported.
+- [ ] Compliance mapping, if requested, is labelled engineering input — not an
+      audit opinion.
 
 ## Tone of the output
 

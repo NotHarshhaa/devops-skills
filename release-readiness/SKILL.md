@@ -4,7 +4,7 @@ description: Validate production deployment readiness as a senior release manage
 license: MIT
 metadata:
   author: devops-skills contributors
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # Release Readiness
@@ -14,6 +14,11 @@ an advisor, not an operator**. You assess whether a service or release is safe
 to ship, produce an honest **go / no-go** with the gaps that justify it, and
 write remediation plans for the blockers that a *different, less capable agent
 with zero context* can execute. You never deploy or promote anything.
+
+Shared contract: [../docs/skill-contract.md](../docs/skill-contract.md) — hard
+rules, environment preflight, effort levels, output paths, the findings table,
+and the finishing quality bar. Read it first; the rules below are the ones
+specific to a go/no-go review.
 
 ## Hard Rules
 
@@ -65,9 +70,21 @@ Assess each gate and mark **PASS / FAIL / N/A** with evidence.
 Produce the assessment:
 
 - **Overall: GO / GO-WITH-CONDITIONS / NO-GO**, in one line, up front.
-- A gate table (gate → PASS/FAIL/N/A → evidence).
+- A gate table:
+
+  | Gate | Verdict | Evidence | Blocker? |
+  |------|---------|----------|----------|
+  | Rollback path tested | FAIL | no rollback step in `.github/workflows/deploy.yml:60` | yes |
+
+  Verdict is PASS / FAIL / N/A / UNVERIFIED. **UNVERIFIED is not PASS** — use it
+  whenever access or data was missing, and treat an unverified critical gate as a
+  condition.
 - **Hard blockers** (must fix before ship) vs. **follow-ups** (safe to ship,
-  fix soon), each as a finding with evidence and severity.
+  fix soon), each as a finding with evidence and severity, listed with the
+  canonical columns:
+
+  | # | Gap | Blocker? | Category | Impact | Effort | Risk | Conf | Evidence |
+  |---|-----|----------|----------|--------|--------|------|------|----------|
 
 Be explicit about what you could not verify (no access to load-test results,
 etc.) — an unverifiable critical gate is a conditional, not a pass.
@@ -81,12 +98,38 @@ the right domain where relevant (a probe gap → `/k8s-review` shape, an alert g
 
 ## Invocation variants
 
+Effort keywords (`quick` / `standard` / `deep`) and the shared `<focus>` and
+`plan <description>` modifiers behave as defined in the
+[skill contract](../docs/skill-contract.md#4-effort-levels).
+
 - Bare → full readiness review and go/no-go for the release in scope.
 - `quick` → the hard-blocker gates only (rollback, safe deploy, critical
   alerts, passing verification) for a fast go/no-go.
 - `deep` → every gate plus cross-checks against live config and dashboards.
 - Focus (`rollback`, `observability`, `security`, `capacity`) → that gate group.
 - `plan <description>` → spec one known blocker fix.
+
+## Related skills
+
+- `/k8s-review`, `/terraform-review`, `/pipeline-review`, `/db-review` — the
+  domain depth behind a failed gate.
+- `/observability` — alert and dashboard gaps for this release.
+- `/dr-review` — restore and failover readiness for stateful services.
+- `/runbook` — the new failure modes this release introduces need one.
+- `/incident` — if it is already broken, this is the wrong skill.
+
+## Before you finish
+
+- [ ] The verdict is on the first line and is consistent with the gate table.
+- [ ] No gate is marked PASS on assumption — unverified is `UNVERIFIED`.
+- [ ] The rollback gate is backed by evidence it has actually been **exercised**,
+      not just that a command exists.
+- [ ] Artifact identity was checked: what was tested is byte-for-byte what deploys.
+- [ ] DB migration reversibility and backward compatibility were checked
+      explicitly (or routed to `/db-review`).
+- [ ] The bar was calibrated to the service's criticality, and the calibration
+      is stated out loud.
+- [ ] Hard blockers are separated from ship-with-follow-up, each with a plan.
 
 ## Tone of the output
 

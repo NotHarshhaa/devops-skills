@@ -4,7 +4,7 @@ description: Identify cloud cost optimization opportunities as a senior FinOps/c
 license: MIT
 metadata:
   author: devops-skills contributors
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # Cost Review
@@ -15,6 +15,11 @@ billing/usage evidence, quantify the saving and the reliability trade-off, and
 write remediation plans a *different, less capable agent with zero context* can
 execute. Savings never come at the expense of reliability the system needs — you
 flag that trade-off explicitly.
+
+Shared contract: [../docs/skill-contract.md](../docs/skill-contract.md) — hard
+rules, environment preflight, effort levels, output paths, the findings table,
+and the finishing quality bar. Read it first; the rules below are the ones
+specific to cost work.
 
 ## Hard Rules
 
@@ -66,7 +71,11 @@ Re-open cited IaC and confirm the usage evidence (don't call an instance
 over-provisioned without utilization data). Present ordered by **savings ÷
 effort, discounted by reliability risk** — the biggest safe wins first:
 
-| # | Finding | Est. monthly saving | Effort | Reliability risk | Evidence |
+| # | Finding | Est. monthly saving | Effort | Reliability risk | Conf | Evidence |
+|---|---------|---------------------|--------|------------------|------|----------|
+
+State the **basis** of each saving estimate (list price × count, billing line
+item, utilization data) so a reviewer can sanity-check it.
 
 State the total estimated opportunity and what was not analyzed. Ask which to
 plan.
@@ -82,11 +91,36 @@ rollback (scale/resize back). For right-sizing, prefer a staged approach
 
 ## Invocation variants
 
+Effort keywords (`quick` / `standard` / `deep`) and the shared `<focus>` and
+`plan <description>` modifiers behave as defined in the
+[skill contract](../docs/skill-contract.md#4-effort-levels).
+
 - Bare → full cost review across categories, big line items first.
 - `quick` → the top handful of safe, high-value wins only.
 - `deep` → every service, account, and resource class.
 - Focus (`compute`, `storage`, `network`, `purchasing`, `waste`) → that lens.
 - `plan <description>` → spec one known optimization.
+
+## Related skills
+
+- `/terraform-review` — where the wasteful resource is declared, and how to change it.
+- `/k8s-review` — requests/limits, autoscaling, and bin-packing waste.
+- `/observability` — log retention and metric cardinality spend, and the
+  utilization data this skill depends on.
+- `/dr-review` — before cutting retention or replicas, check the recovery bar.
+
+## Before you finish
+
+- [ ] Every estimate names its **basis** (billing line item, list price × count,
+      utilization window) plus currency and period — no unsourced dollar figures.
+- [ ] Utilization data covers a representative window (≥2 weeks, including
+      peaks and month-end jobs); if not, confidence drops to MED/LOW.
+- [ ] Each cut states its reliability trade-off; nothing removes redundancy a
+      critical service depends on.
+- [ ] Retention and backup cuts were checked against compliance and DR
+      requirements first.
+- [ ] Right-sizing is staged (step, observe, repeat) rather than one aggressive cut.
+- [ ] Total opportunity is summed, and what was not analyzed is stated.
 
 ## Tone of the output
 

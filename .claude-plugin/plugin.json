@@ -1,13 +1,14 @@
 {
   "name": "devops-skills",
   "description": "A collection of read-only DevOps advisor skills. Point them at infrastructure, clusters, pipelines, databases, or an incident and they investigate, base findings on evidence, and write structured remediation or investigation plans any agent can execute. They never apply changes themselves.",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "skills": [
     "./audit",
     "./cost",
     "./db-review",
     "./docker-review",
     "./dr-review",
+    "./gitops-review",
     "./incident",
     "./k8s-review",
     "./observability",
@@ -15,7 +16,8 @@
     "./release-readiness",
     "./runbook",
     "./security-review",
-    "./terraform-review"
+    "./terraform-review",
+    "./upgrade-review"
   ],
   "author": {
     "name": "devops-skills contributors",
@@ -39,6 +41,11 @@
     "disaster-recovery",
     "database",
     "runbook",
-    "release-readiness"
+    "release-readiness",
+    "gitops",
+    "argocd",
+    "flux",
+    "upgrade-review",
+    "deprecations"
   ]
 }

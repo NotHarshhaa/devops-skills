@@ -4,6 +4,15 @@ All notable changes to DevOps Skills. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); the collection uses
 semantic versioning, and each skill also carries its own `metadata.version`.
 
+## [1.2.0] — 2026-09-19
+
+### Added
+
+- **`/upgrade-review`** (v1.0.0) — Kubernetes API deprecations, cluster add-on and node containerd compatibility, Terraform provider major-version breaking changes (v4 → v5), and runtime EOL checks. Generates an upgrade posture table and sequenced zero-downtime execution plans (manifests → add-ons → control plane → worker drain).
+- **`/gitops-review`** (v1.0.0) — ArgoCD and Flux delivery pipeline reviews. Diagnoses out-of-sync drift root causes (HPA replicas, mutating webhooks), dangerous automated prune policies on stateful storage, self-heal collision with emergency hotfixes, sync-wave dependencies, and secret operator reconciliation loops.
+- **GitHub Actions CI validation workflow** (`.github/workflows/validate.yml`) — automatically validates YAML frontmatter, link resolution, `.claude-plugin/plugin.json` sync, and documentation routing on pull requests.
+- **Validation script** (`scripts/validate.js`) — automated test suite for local and CI skill validation.
+
 ## [1.1.1] — 2026-09-19
 
 ### Fixed

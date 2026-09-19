@@ -49,6 +49,7 @@ and let the AI follow a predefined workflow.
 | `/pipeline-review`  | CI/CD reliability, speed, and supply-chain security.                   |
 | `/docker-review`    | Dockerfiles, image size and layering, container hardening.             |
 | `/db-review`        | Migration safety, locking, pooling, indexing, replication.             |
+| `/gitops-review`    | ArgoCD, Flux, sync policies, drift diagnosis, and secret loops.        |
 
 **Cross-cutting posture**
 
@@ -64,6 +65,7 @@ and let the AI follow a predefined workflow.
 | Skill                | Purpose                                                             |
 | -------------------- | ------------------------------------------------------------------- |
 | `/release-readiness` | Go / no-go gate review before production.                           |
+| `/upgrade-review`    | Kubernetes API deprecations, provider major upgrades, runtime EOL.  |
 | `/runbook`           | Write (or audit) on-call runbooks, one per failure mode.             |
 
 Not sure which one? Use `/audit` — or see the [routing table](docs/skill-contract.md#6-cross-skill-routing).
@@ -145,7 +147,7 @@ The full contract is in [docs/skill-contract.md](docs/skill-contract.md). The lo
 ## Repository layout
 
 ```text
-<skill>/SKILL.md      one directory per skill (13 of them)
+<skill>/SKILL.md      one directory per skill (15 of them)
 docs/                 the shared contract, formats, and templates
 examples/             illustrative sample output — never executable
 .claude-plugin/       plugin + marketplace manifests

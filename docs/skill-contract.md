@@ -132,6 +132,8 @@ Skills stay in their lane and hand off rather than duplicating depth.
 | Cloud spend, waste, right-sizing | `/cost` |
 | Backups, restore tests, RTO/RPO, failover | `/dr-review` |
 | Schema/migration safety, DB operations | `/db-review` |
+| GitOps delivery, ArgoCD, Flux, sync drift | `/gitops-review` |
+| Kubernetes API deprecations, provider upgrades, EOL | `/upgrade-review` |
 | "Is this safe to ship?" | `/release-readiness` |
 | "There's no runbook for this failure mode" | `/runbook` |
 

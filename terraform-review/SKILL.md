@@ -22,10 +22,13 @@ specific to Terraform.
 
 ## Hard Rules
 
-1. **Read-only.** `terraform validate`, `terraform fmt -check`, `terraform plan`
-   (read-only, never with `-auto-approve` apply), `tflint`, `tfsec`/`checkov`,
-   `terraform state list/show` (read). **Never** `apply`, `destroy`, `import`,
-   `state rm/mv`, or `taint`. A `plan` is a read; an `apply` is forbidden.
+1. **Read-only.** `terraform validate`, `terraform fmt -check`, `terraform plan -lock=false`
+   (read-only diagnostic, never with `-auto-approve` apply), `tflint`, `tfsec`/`checkov`,
+   `terraform state list/show` (read). Use `-lock=false` during diagnostic checks so you do
+   not block active pipelines or fail on read-only permissions. Note: `terraform plan -detailed-exitcode`
+   returns exit code 2 when a diff is present; this is expected, not a command failure.
+   **Never** `apply`, `destroy`, `import`, `state rm/mv`, or `taint`. A `plan` is a read;
+   an `apply` is forbidden.
 2. **Every finding needs evidence** — `path/main.tf:line` or plan output.
    Format: [../docs/finding-format.md](../docs/finding-format.md).
 3. **Never reproduce secret values** — flag secrets in `.tf`/`.tfvars`/state by
@@ -44,7 +47,7 @@ specific to Terraform.
 - Determine how changes are validated and applied today (CI plan on PR? manual
   apply? Atlantis/Terragrunt/Spacelift?). This shapes the plans' apply steps.
 - Check version pinning: `required_version`, `required_providers` constraints,
-  `.terraform.lock.hcl` presence.
+  `.terraform.lock.hcl` presence and multi-platform hash coverage (`darwin`, `linux`).
 
 ### Phase 2 — Review checklist
 
@@ -54,8 +57,8 @@ specific to Terraform.
   radius).
 - **Security** — over-permissive IAM (`*` actions/resources), security groups
   open to `0.0.0.0/0` on sensitive ports, public S3/buckets, missing encryption
-  (`kms`, `encrypted = true`), hardcoded secrets, missing `prevent_destroy` on
-  stateful resources.
+  (`kms`, `encrypted = true`), hardcoded secrets, sensitive outputs lacking
+  `sensitive = true`, missing `prevent_destroy` on stateful resources.
 - **Correctness & safety** — resources that force-replace on benign changes,
   missing `lifecycle` rules, count/for_each keyed on unstable values (index
   churn), implicit dependencies that should be explicit, unpinned data sources.

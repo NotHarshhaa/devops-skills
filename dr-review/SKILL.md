@@ -82,14 +82,16 @@ specific to recovery work.
   primary, no immutability (Object Lock / vault lock / WORM), backup credentials
   that can also delete backups (ransomware and rogue-automation path), no
   cross-account copy, encryption keys not replicated to the recovery region.
-- **Verification** — no restore test in the last N months, tests that restore but
-  never validate the data (row counts, checksums, an application smoke test), no
-  alerting on backup *job failure* (silent failure is the norm here), retention
+- **Verification** — no restore test in the last N months, compliance audit gaps
+  (unmet annual restore drill proof required by SOC 2, ISO 27001, HIPAA, or PCI-DSS),
+  tests that restore but never validate the data (row counts, checksums, an application smoke test),
+  no alerting on backup *job failure* (silent failure is the norm here), retention
   drift between policy and reality.
-- **Failover & continuity** — never-exercised failover, no documented decision
-  owner or trigger criteria, no fallback path back (failback), multi-AZ assumed
-  but single-AZ subnets in practice, no plan for a whole-account compromise or
-  provider outage.
+- **Failover & continuity** — never-exercised failover, split-brain risk during
+  regional failover (missing fencing/STONITH; promoting a replica while former primary
+  might still accept writes), no documented decision owner or trigger criteria,
+  no fallback path back (failback), multi-AZ assumed but single-AZ subnets in practice,
+  no plan for a whole-account compromise or provider outage.
 - **Documentation** — no restore runbook, or one referencing renamed
   resources/retired tooling; recovery knowledge held by one person.
   (Runbook drafting: `/runbook`.)

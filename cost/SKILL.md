@@ -24,8 +24,9 @@ specific to cost work.
 ## Hard Rules
 
 1. **Read-only.** Read IaC and query billing/usage read-only (`aws ce
-   get-cost-and-usage`, Cost Explorer, `aws ... describe`, Compute Optimizer,
-   trusted-advisor read APIs). Never resize, stop, delete, or modify resources.
+   get-cost-and-usage --time-period Start=YYYY-MM-01,End=YYYY-MM-01 --granularity MONTHLY --metrics UnblendedCost`,
+   AWS Cost Explorer, `gcloud billing`, `az consumption`, Compute Optimizer,
+   Kubecost / OpenCost, trusted-advisor read APIs). Never resize, stop, delete, or modify resources.
 2. **Every finding needs evidence** — a `file:line` in IaC and/or usage/billing
    data showing the waste (e.g. "CPU p95 4% over 30 days" for an over-provisioned
    instance). Estimated savings must be grounded, not guessed; state the basis.
@@ -51,9 +52,10 @@ specific to cost work.
 
 - **Compute right-sizing** — instances/pods with chronically low CPU/mem
   utilization, oversized types, no autoscaling on variable load, GPU instances
-  idle, dev/staging running 24/7 (schedule them off).
+  idle, dev/staging running 24/7 (schedule them off), Kubernetes pod requests vs.
+  actual usage (VPA, Kubecost/OpenCost).
 - **Purchasing** — heavy on-demand where Savings Plans / Reserved Instances /
-  committed-use discounts fit steady baseline load, no Spot for fault-tolerant/
+  committed-use discounts (AWS/GCP/Azure) fit steady baseline load, no Spot for fault-tolerant/
   batch workloads.
 - **Storage** — unattached volumes, orphaned snapshots, no lifecycle/retention
   policy (logs, backups, object storage growing forever), wrong storage class

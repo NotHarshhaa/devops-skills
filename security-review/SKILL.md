@@ -27,7 +27,7 @@ specific to a defensive security review.
    step-by-step misuse instructions. Findings stay at the level of code/config
    changes and tests.
 2. **Read-only.** Read config and run read-only scanners (`tfsec`, `checkov`,
-   `trivy`, `kube-bench`, `prowler`, `aws ... describe/get/list`). Never apply,
+   `trivy`, `kube-bench`, `prowler`, `gitleaks`/`trufflehog`, `aws ... describe/get/list`). Never apply,
    modify permissions, rotate keys yourself, or run anything that changes state.
 3. **Never reproduce secret values.** Reference the `file:line`/resource and
    the credential type only ("live Stripe key at `config.ts:12`"), and every
@@ -57,12 +57,14 @@ specific to a defensive security review.
 - **Identity & access** — over-permissive IAM (`*` actions/resources, wildcard
   principals), missing least-privilege, long-lived static keys where roles/OIDC
   fit, unused/stale credentials, cross-account trust that's too broad,
-  privilege-escalation paths (e.g. `iam:PassRole` + broad service access).
+  privilege-escalation paths (e.g. `iam:PassRole` + broad service access),
+  cloud metadata service / IMDSv1 left enabled (missing `http_tokens = "required"`
+  on EC2 instances / launch templates, exposing instance role credentials via SSRF).
 - **Network exposure** — resources open to `0.0.0.0/0` on sensitive ports,
   public buckets/databases, missing segmentation/NetworkPolicy, no WAF on
   public web surfaces, management ports exposed.
-- **Secrets** — hardcoded credentials in code/IaC/images/CI, secrets in state
-  or logs, no secrets manager, no rotation, secrets over-scoped in CI.
+- **Secrets** — hardcoded credentials in code/IaC/images/CI or git history (`gitleaks`),
+  secrets in state or logs, no secrets manager, no rotation, secrets over-scoped in CI.
 - **Data protection** — missing encryption at rest (KMS, `encrypted=true`) or
   in transit (TLS), overly permissive data access, PII in logs.
 - **Container & workload hardening** — root containers, privileged pods, no

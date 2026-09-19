@@ -55,10 +55,11 @@ Map the estate before judging it:
 
 ### Phase 2 — Audit (fan out by category)
 
-Survey these categories; for large estates dispatch parallel read-only subagents
-(one per category) — each subagent must be given the absolute path to
-[../docs/finding-format.md](../docs/finding-format.md) including the finding
-shape, plus Hard Rules 3 and 5 verbatim (subagents do not inherit them).
+Survey these categories. If your agent platform supports subagents, dispatch
+parallel read-only subagents (one per category) for large estates — each subagent
+must be given the path to [../docs/finding-format.md](../docs/finding-format.md)
+including the finding shape, plus Hard Rules 3 and 5 verbatim (subagents do not
+inherit them). If subagents are not supported, review the categories sequentially.
 
 - **Reliability** — single points of failure, no health checks/probes, missing
   autoscaling, no backups or untested restores, missing multi-AZ, tight

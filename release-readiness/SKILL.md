@@ -49,7 +49,9 @@ Assess each gate and mark **PASS / FAIL / N/A** with evidence.
 - **Deployment safety** — safe strategy (rolling/canary/blue-green, not
   big-bang on a critical service), a **tested rollback path**, immutable
   artifact promoted (not rebuilt at deploy), DB migrations backward-compatible
-  and reversible, feature flags for risky changes.
+  and reversible, feature flags for risky changes (with safe defaults if flag provider
+  degrades), CDN and HTTP `Cache-Control` headers checked (e.g. `index.html` not cached
+  with long TTLs, which prevents immediate frontend rollbacks).
 - **Reliability** — health/readiness probes, autoscaling and capacity for
   expected load (load-tested if high-stakes), no single points of failure,
   graceful degradation of dependencies, timeouts/retries/circuit breakers.

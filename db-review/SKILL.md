@@ -99,6 +99,10 @@ specific to database work.
   wraparound risk, replication lag unmonitored, failover behaviour untested,
   `deletion_protection` and final snapshot disabled, no PITR
   (deep dive: `/dr-review`), single-AZ prod database.
+- **NoSQL & distributed stores (when in scope)** — DynamoDB partition key
+  hot-spotting or unmonitored RCU/WCU throttling, missing TTL on transient items,
+  MongoDB unindexed queries driving working sets out of RAM, replica set write
+  concerns missing `majority` on critical mutations.
 - **Security & access** — the app connecting as superuser/owner instead of a
   least-privilege role, shared credentials across services, no TLS enforced, no
   audit logging on sensitive tables, PII unencrypted or logged.

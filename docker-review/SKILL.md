@@ -24,9 +24,10 @@ specific to container builds.
 
 1. **Read-only.** Read Dockerfiles/Compose; run only read-only inspection/scan
    (`docker inspect`, `docker history`, `hadolint`, `trivy image`/`grype`,
-   `dive`). Never `build && push`, `run`, `rm`, or edit files. (A local scan
-   build purely to analyze layers may be proposed as a step, but you do not push
-   or deploy anything.)
+   `trivy config .`, `dive`). Never `build`, `push`, `run`, `rm`, or edit files.
+   Never execute `docker build` on an untrusted Dockerfile during review
+   (arbitrary code execution risk via `RUN` instructions); rely on static analysis
+   or pre-existing images.
 2. **Every finding needs evidence** — `Dockerfile:line` or scan output.
    Format: [../docs/finding-format.md](../docs/finding-format.md).
 3. **Never reproduce secret values** — flag secrets baked into layers/`ARG`/`ENV`
@@ -50,8 +51,10 @@ specific to container builds.
   images (no digest), known-vuln base images (scan), secrets in `ENV`/`ARG`/
   layers, `ADD` of remote URLs, unnecessary packages/build tools in the runtime
   image (attack surface), missing `--no-install-recommends`/cache cleanup,
-  world-writable files, no `HEALTHCHECK`, sensitive files not in
-  `.dockerignore` (leaking `.git`, `.env`, creds into build context).
+  world-writable files, no `HEALTHCHECK` for standalone/Compose workloads
+  (note: Kubernetes ignores Dockerfile `HEALTHCHECK` in favor of pod probes),
+  sensitive files not in `.dockerignore` (leaking `.git`, `.env`, creds into
+  build context).
 - **Image size** — no multi-stage build (build toolchain shipped to prod),
   fat base image where slim/distroless fits, layers not ordered for cache reuse,
   package manager caches not cleaned in the same layer, copying the whole

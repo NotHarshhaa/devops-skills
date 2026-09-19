@@ -51,8 +51,9 @@ specific to CI/CD.
   into shell (script injection), unpinned third-party actions (`@main` / no SHA
   pin), over-broad `GITHUB_TOKEN`/job permissions (should be least-privilege
   `permissions:`), secrets exposed to fork PRs, no artifact/image signing or
-  provenance, missing dependency/lockfile integrity checks, self-hosted runners
-  reachable by untrusted PRs.
+  provenance (missing SLSA attestations / OpenSSF Scorecard checks), cache poisoning
+  risks (unscoped `actions/cache` keys shared across untrusted branches), missing
+  dependency/lockfile integrity checks, self-hosted runners reachable by untrusted PRs.
 - **Reliability** — flaky patterns (no retries on network steps, reliance on
   real external services in tests, timing/order dependence), no timeouts (hung
   jobs burning minutes), non-deterministic builds, missing `concurrency` control

@@ -49,7 +49,9 @@ specific to observability tooling.
 
 - **Coverage (the three pillars)** — critical paths with no metrics, services
   with no structured logs or no correlation/request IDs, no distributed tracing
-  across service boundaries, black-box components with zero instrumentation.
+  across service boundaries, black-box components with zero instrumentation,
+  OpenTelemetry (OTel) Collector pipelines lacking `memory_limiter` processor
+  (risks collector OOM crash loops under traffic surges).
 - **Golden signals / SLOs** — latency, traffic, errors, saturation missing for
   key services; no defined SLOs/SLIs or error budgets; RED/USE method gaps.
 - **Alerting quality** — alerts on causes not symptoms (page on "CPU high"
@@ -63,9 +65,10 @@ specific to observability tooling.
   services, dashboards that don't map to how the system fails, stale/broken
   panels.
 - **Operational readiness** — no log retention or too-short retention for
-  forensics, high-cardinality metrics risking cost/perf, no synthetic/black-box
-  monitoring of the user-facing path, missing deploy/version annotations to
-  correlate changes with regressions.
+  forensics, high-cardinality metrics risking cost/perf, unconstrained trace
+  sampling (100% trace capture on high-throughput paths risking cost explosion;
+  missing head/tail sampling), no synthetic/black-box monitoring of the user-facing
+  path, missing deploy/version annotations to correlate changes with regressions.
 
 ### Phase 3 — Vet, prioritize, confirm
 

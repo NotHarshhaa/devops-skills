@@ -23,7 +23,7 @@ specific to Kubernetes.
 ## Hard Rules
 
 1. **Read-only.** Read manifests; run only `kubectl get/describe/logs/top`,
-   `kubectl diff`, `helm template`, `helm diff`, `kustomize build`, `kubeconform`/`kubeval`.
+   `kubectl diff`, `helm template`, `helm diff`, `kustomize build`, `kubeconform`.
    Never `apply`, `delete`, `scale`, `rollout restart`, `patch`, `cordon`, or `edit`.
 2. **Every finding needs evidence** — `manifest.yaml:line` or a `kubectl`
    command + its output. Format: [../docs/finding-format.md](../docs/finding-format.md).
@@ -58,11 +58,14 @@ Work these categories; cite evidence per finding.
 - **Availability & scheduling** — `replicas: 1` on critical services, no
   `PodDisruptionBudget`, no anti-affinity/`topologySpreadConstraints` (all pods
   on one node/AZ), no `HorizontalPodAutoscaler`, missing `priorityClassName`.
+- **Networking & ingress** — Ingress / Gateway API misconfigurations, missing TLS
+  termination or expired cert annotations (`cert-manager`), missing ingress timeouts
+  causing premature 504 drops on slow requests, missing backend protocol specifications,
+  missing `NetworkPolicy` (default-allow).
 - **Security** — containers running as root / no `securityContext`
   (`runAsNonRoot`, `readOnlyRootFilesystem`, dropped capabilities), privileged
-  or hostPath/hostNetwork use, missing `NetworkPolicy` (default-allow), overly
-  broad RBAC (`cluster-admin`, wildcard verbs), `automountServiceAccountToken`
-  left on, `:latest` image tags, no image digest pinning.
+  or hostPath/hostNetwork use, overly broad RBAC (`cluster-admin`, wildcard verbs),
+  `automountServiceAccountToken` left on, `:latest` image tags, no image digest pinning.
 - **Config & secrets** — secrets in plain env/ConfigMaps, no external secrets
   operator, config baked into images.
 - **Reliability details** — no `imagePullPolicy` discipline, missing

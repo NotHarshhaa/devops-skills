@@ -4,6 +4,27 @@ All notable changes to DevOps Skills. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); the collection uses
 semantic versioning, and each skill also carries its own `metadata.version`.
 
+## [1.1.1] — 2026-09-19
+
+### Fixed
+
+- **Claude Code plugin skill discovery** — added explicit `"skills"` array in `.claude-plugin/plugin.json` listing all 13 skill directories so Claude Code and marketplace installations discover and load every skill automatically.
+- **Docker review safety** — clarified that `docker build` must never be run during review on untrusted code (arbitrary code execution risk via `RUN` instructions); standardized on static analysis (`hadolint`, `trivy config .`) and pre-existing image inspection.
+- **Terraform non-blocking diagnostics** — recommended `terraform plan -lock=false` for diagnostic inspections to avoid locking remote backends, and documented that exit code 2 from `terraform plan -detailed-exitcode` signals diff presence rather than command failure.
+- **Cost query execution syntax** — added required `--time-period`, `--granularity`, and `--metrics` parameter templates for `aws ce get-cost-and-usage`, plus multi-cloud equivalents (`gcloud billing`, `az consumption`) and Kubernetes cost tools (`Kubecost`, `OpenCost`).
+- **Audit subagent resilience** — updated Phase 2 subagent dispatch to gracefully fall back to sequential category review when runtimes do not support subagent spawning.
+- **Modernized Kubernetes tooling** — removed deprecated `kubeval` in `/k8s-review` and standardized on `kubeconform`.
+
+### Added
+
+- **Gateway API & Ingress checks** (`/k8s-review`) — added inspection for Gateway API routes, Ingress timeouts, and TLS / cert-manager annotations.
+- **IMDSv2 & secret scanners** (`/security-review`) — added checks for EC2 IMDSv1 vs IMDSv2 (`http_tokens = "required"`) to prevent SSRF credential theft, and added `gitleaks`/`trufflehog` to scanner references.
+- **OpenTelemetry Collector & trace sampling checks** (`/observability`) — added checks for OTel Collector `memory_limiter` processor to prevent OOM crash loops, and trace head/tail sampling rates to prevent runaway APM costs.
+- **Disaster recovery split-brain & compliance checks** (`/dr-review`) — added checks for split-brain prevention (fencing/STONITH) during regional failover and annual compliance restore proof (SOC 2, ISO 27001, HIPAA, PCI-DSS).
+- **Supply-chain provenance & cache poisoning** (`/pipeline-review`) — added checks for SLSA provenance / OpenSSF Scorecard and `actions/cache` branch key isolation.
+- **CDN Cache-Control & flag fallback** (`/release-readiness`) — added checks for `Cache-Control` TTL on entry assets (`index.html`) to ensure immediate rollback capability, and safe fallback states for feature flags.
+- **NoSQL / distributed datastore checklist** (`/db-review`) — added checks for DynamoDB partition hot-spotting/throttling and MongoDB replica write concerns.
+
 ## [1.1.0] — 2026-08-01
 
 ### Added
